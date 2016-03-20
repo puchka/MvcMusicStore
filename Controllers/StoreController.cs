@@ -1,5 +1,6 @@
-using System.Net;
+using System.Collections.Generic;
 using Microsoft.AspNet.Mvc;
+using MvcMusicStore.Models;
 
 namespace MvcMusicStore.Controllers
 {
@@ -7,24 +8,29 @@ namespace MvcMusicStore.Controllers
     {
         //
         // GET: /Store/
-        public string Index()
+        public ActionResult Index()
         {
-            return "Hello from Store.Index()";
+            var genres = new List<Genre>
+            {
+                new Genre { Name = "Disco"},
+                new Genre { Name = "Jazz"},
+                new Genre { Name = "Rock"}
+            };
+            return View(genres);
         }
         //
-        // GET: /Store/Browse
-        public string Browse(string genre)
+        // GET: /Store/Browse?genre=Disco
+        public ActionResult Browse(string genre)
         {
-            string message =
-                    WebUtility.HtmlEncode("Store.Browse, Genre = " + genre);
-            return message;
+            var genreModel = new Genre { Name = genre };
+            return View(genreModel);
         }
         //
         // GET: /Store/Details/5
-        public string Details(int id)
+        public ActionResult Details(int id)
         {
-            string message = "Store.Details, ID = " + id;
-            return message;
+            var album = new Album { Title = "Album " + id };
+            return View(album);
         }
     }
 }
