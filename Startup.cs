@@ -32,7 +32,6 @@ namespace MvcMusicStore
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
-            Configuration["Data:DefaultConnection:ConnectionString"] = $@"Data Source={appEnv.ApplicationBasePath}/MvcMusicStore.db";
 
         }
 
@@ -42,10 +41,12 @@ namespace MvcMusicStore
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            var connection = @"Host=localhost;Port=5432;Database=MvcMusicStore;Username=postgres;Password=password";
+            
             services.AddEntityFramework()
-                .AddSqlite()
-                .AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlite(Configuration["Data:DefaultConnection:ConnectionString"]));
+                .AddNpgsql()
+                .AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connection))
+                .AddDbContext<MusicStoreEntities>(options => options.UseNpgsql(connection));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -100,6 +101,8 @@ namespace MvcMusicStore
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            
+            app.SeedData();
         }
 
         // Entry point for the application.
